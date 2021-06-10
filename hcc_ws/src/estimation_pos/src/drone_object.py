@@ -61,7 +61,9 @@ def callback(depth_img, bb):
     if abs(local_time - transform_time) < ??? and transform_time != 0:
         print("Time error")
         print(local_time - transform_time)
-
+        
+        # hint: http://docs.ros.org/en/jade/api/tf/html/python/transformations.html
+        # You could use "quaternion_matrix" function to find the 4x4 transform matrix
         global_transform = quaternion_matrix(???)
         global_transform[0][3] = ???
         global_transform[1][3] = ???
