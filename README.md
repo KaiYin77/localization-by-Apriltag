@@ -29,7 +29,7 @@ Run ROS master:
 `$ roscore`
 
 Set use_sim_time to true:  
-`$ rosparam set use_sim_time true`
+`$ rosparam set use_sim_time true`  
 Then, 
 
 > open one terminal(T1)
