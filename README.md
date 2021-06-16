@@ -1,12 +1,18 @@
 # Final competition #
 ## Step1
 ```
-$ git clone  https://github.com/banbanhank/hcc-final-competition-2021.git
+$ git clone https://github.com/banbanhank/hcc-final-competition-2021.git
 ```
 [Github](https://github.com/banbanhank/hcc-final-competition-2021)
+Please copy the "darknet_ros" pakage you have use in Lab8 and Lab9 into your workspace.  
+![](https://imgur.com/0dVP4uY.png)  
 
 ## Step2
-Please finish the template.
+Please finish the template shown below:
+* hcc-final-competition-2021/hcc_ws/src/estimation_pos/src/apriltag_localization.cpp
+* hcc-final-competition-2021/hcc_ws/src/estimation_pos/src/drone_object.py
+* hcc-final-competition-2021/hcc_ws/src/estimation_pos/src/pyrobot_object.py
+
 Note that you have to catkin_make your code each time after you change your code.
 ```
 $ catkin_make
@@ -19,11 +25,11 @@ $ source devel/setup.bash
 ```
 ### Implementation
 
-Run ROS master:  
+Run ROS master:
 `$ roscore`
 
-Set use_sim_time to true:  
-`$ rosparam set use_sim_time true`  
+Set use_sim_time to true:
+`$ rosparam set use_sim_time true`
 Then, 
 
 > open one terminal(T1)
