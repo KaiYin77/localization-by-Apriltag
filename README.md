@@ -25,10 +25,10 @@ $ source devel/setup.bash
 ```
 ### Implementation
 
-Run ROS master:
+Run ROS master:  
 `$ roscore`
 
-Set use_sim_time to true:
+Set use_sim_time to true:  
 `$ rosparam set use_sim_time true`
 Then, 
 
