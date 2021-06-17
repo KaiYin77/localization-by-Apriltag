@@ -1,12 +1,41 @@
-# Final competition #
+# Team MOLA : HCC Final competition #
 ## Step1
 ```
-$ git clone  https://github.com/banbanhank/hcc-final-competition-2021.git
+$ https://github.com/KaiYin77/Localization_by_Apriltag.git
 ```
-[Github](https://github.com/banbanhank/hcc-final-competition-2021)
+## Git Tips
+### SOP
+```
+$ git add . 
+$ git commit -m "something"
+$ git push [remote] [branch]
+```
+### How to add remote repo to local
+```
+$ git remote add <name> <url>
+```
+### How to fetch and merge the latest repo to local copy
+```
+$ git pull <remote>
+```
+### First time NEED to create a branch from master
+```
+$ git branch <new_branch_name>
+``` 
+### Switch to the branch
+```
+$ git checkout -b <your_branch_name>
+```
+
+Please copy the "darknet_ros" pakage you have use in Lab8 and Lab9 into your workspace.  
+![](https://imgur.com/0dVP4uY.png)  
 
 ## Step2
-Please finish the template.
+Please finish the template shown below:
+* hcc-final-competition-2021/hcc_ws/src/estimation_pos/src/apriltag_localization.cpp
+* hcc-final-competition-2021/hcc_ws/src/estimation_pos/src/drone_object.py
+* hcc-final-competition-2021/hcc_ws/src/estimation_pos/src/pyrobot_object.py
+
 Note that you have to catkin_make your code each time after you change your code.
 ```
 $ catkin_make

@@ -157,9 +157,15 @@ add_executable(apriltag_localization src/apriltag_localization.cpp)
 add_dependencies(apriltag_localization ${catkin_EXPORTED_TARGETS} tutorial_gencpp)
 target_link_libraries(apriltag_localization ${catkin_LIBRARIES})
 
+<<<<<<< HEAD
 #add_executable(test src/test.cpp)
 #add_dependencies(test ${catkin_EXPORTED_TARGETS})
 #target_link_libraries(test ${catkin_LIBRARIES})
+=======
+# add_executable(test src/test.cpp)
+# add_dependencies(test ${catkin_EXPORTED_TARGETS})
+# target_link_libraries(test ${catkin_LIBRARIES})
+>>>>>>> b5f707aca104338883af46ed2cb4994562ccd25a
 
 #############
 ## Install ##
