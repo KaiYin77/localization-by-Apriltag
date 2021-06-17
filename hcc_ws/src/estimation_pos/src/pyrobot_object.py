@@ -36,13 +36,13 @@ transform = Odometry()
 
 
 def main():
-    depth_image_sub = message_filters.Subscriber('???', ???)
+    depth_image_sub = message_filters.Subscriber('/camera/aligned_depth_to_color/image_raw', Image) # ('???', ???)
     ## Note that you may need color image to find the color of bottles
-    color_image_sub = message_filters.Subscriber('???', ???)
-    bb_sub = message_filters.Subscriber('???', ???)
-    ts = message_filters.ApproximateTimeSynchronizer(???, ???, ???)
+    color_image_sub = message_filters.Subscriber('/camera/color/image_raw', Image) #('???', ???)
+    bb_sub = message_filters.Subscriber('/darknet_ros/bounding_boxes', BoundingBoxes) #('???', ???)
+    ts = message_filters.ApproximateTimeSynchronizer([depth_image_sub, bb_sub], 10, 0.5) #(???, ???, ???)
     ts.registerCallback(callback)
-    rospy.Subscriber("???", ???, ???)
+    rospy.Subscriber("apriltag_localization", Odometry, transform_cb) #("???", ???, ???)
     rospy.spin()
 
 def transform_cb(msg):
@@ -59,17 +59,21 @@ def callback(depth_img, bb, color_img):
     print("Get local_time")
     print(local_time)
     print(transform_time)
-    # you could set the time error (local_time - transform_time) by yourseelf    
-    if abs(local_time - transform_time) < ??? and transform_time != 0:
+    # you could set the time error (local_time - transform_time) by yourself    
+    if abs(local_time - transform_time) < 0.1 and transform_time != 0: #??? and transform_time != 0:
         print("Time error")
 
         # hint: http://docs.ros.org/en/jade/api/tf/html/python/transformations.html
         # You could use "quaternion_matrix" function to find the 4x4 transform matrix
         print(local_time - transform_time)
-        global_transform = quaternion_matrix(???)
-        global_transform[0][3] = ???
-        global_transform[1][3] = ???
-        global_transform[2][3] = ???
+        global_transform = quaternion_matrix(np.array(
+                                            [transform.pose.pose.orientation.x, 
+                                             transform.pose.pose.orientation.y, 
+                                             transform.pose.pose.orientation.z, 
+                                             transform.pose.pose.orientation.w])) #(???)
+        global_transform[0][3] = transform.pose.pose.position.x #???
+        global_transform[1][3] = transform.pose.pose.position.y #???
+        global_transform[2][3] = transform.pose.pose.position.z #???
         # print("transform")
         # print(global_transform)
         try:
@@ -80,8 +84,8 @@ def callback(depth_img, bb, color_img):
         except CvBridgeError as e:
             print(e)
 
-        for i in bb.bounding_boxes:
-            if i.Class == "bottle":
+        # for i in bb.bounding_boxes:
+        #     if i.Class == "bottle":
             ############################
             #  Student Implementation  #
             ############################

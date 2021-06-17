@@ -29,8 +29,8 @@ void listener(){
   id = -1;
   min_distance = 100;
   for (int i = 0; i<= 5;i++){
-    string parent_id = ???;
-    string child_id = ???;
+    string parent_id = "camera_link"; //???;
+    string child_id = "tag_" + std::to_string(i); //???;
 
     tf_listener->waitForTransform(child_id, parent_id, ros::Time::now(), ros::Duration(0.07));
     try {
@@ -49,6 +49,11 @@ void listener(){
       // hint:
       // double dist;
       // dist = ???;
+      double dist;
+      double x = v.x();
+      double y = v.y();
+      double z = v.z();
+      dist = sqrt(pow(x,2)+(pow(y,2))+(pow(z,2)));
       /************************************************************** 
       //                                                           //
       //                                                           //
@@ -62,6 +67,11 @@ void listener(){
         find the closet distance from the tag to camera_link (remember to modify the parent_id).  //
       */
       // find the closet tag to localization
+      if(dist < min_distance && child_id!=parent_id){
+		    id = i;
+	    	min_distance = dist;
+	  	  min_distance_trans = echo_transform;	
+	    }
       /************************************************************** 
       //                                                           //
       //                                                           //
@@ -84,20 +94,23 @@ void listener(){
         Find transformation matrix from "camera_color_optical_frame" to "origin".
     */
     tf::Transform localization_trans;
+    localization_trans = tag_transforms[id] * min_distance_trans.inverse() * camera_transform;
     /**************************************************************
     //                 Student Implementation                    //
     **************************************************************/
     /* publish the transform */
+    tf::Quaternion orientation = localization_trans.getRotation();
+    tf::Vector3 position = localization_trans.getOrigin();
     nav_msgs::Odometry trans_odem;
-    trans_odem.pose.pose.position.x = ??? //implement
-    trans_odem.pose.pose.position.y = ???
-    trans_odem.pose.pose.position.z = ???
-    trans_odem.pose.pose.orientation.x = ???
-    trans_odem.pose.pose.orientation.y = ???
-    trans_odem.pose.pose.orientation.z = ???
-    trans_odem.pose.pose.orientation.w = ???
+    trans_odem.pose.pose.position.x = position.getX(); //??? //implement
+    trans_odem.pose.pose.position.y = position.getY(); //???
+    trans_odem.pose.pose.position.z = position.getZ(); //???
+    trans_odem.pose.pose.orientation.x = orientation.getX(); //???
+    trans_odem.pose.pose.orientation.y = orientation.getY(); //???
+    trans_odem.pose.pose.orientation.z = orientation.getZ(); //???
+    trans_odem.pose.pose.orientation.w = orientation.getW(); //???
     trans_odem.header.stamp = ros::Time::now();
-    transform_pub.publish(???);
+    transform_pub.publish(trans_odem); //(???)
   }
   return;
 }
@@ -108,13 +121,13 @@ int main(int argc, char** argv){
   tf_listener = new tf::TransformListener();
   
   // write the publisher
-  transform_pub = nh.advertise<nav_msgs::Odometry>("???", ???);
+  transform_pub = nh.advertise<nav_msgs::Odometry>("apriltag_localization", 1); //("???", ???);
 
   bool find = false;
 
   /* get the transform from "camera_color_optical_frame" to "camera_link" */
-  string parent_id = ???;   // implememt
-  string child_id = ???;
+  string parent_id = "camera_link"; //???;   // implememt
+  string child_id = "camera_color_optical_frame"; //???;
   while (!find) {
     tf_listener->waitForTransform(child_id, parent_id, ros::Time::now(), ros::Duration(0.7));
     try {
@@ -129,8 +142,8 @@ int main(int argc, char** argv){
 
   /* get the transform from "map_tag" to "origin" */
   for (int i = 0; i <=5; i++) {
-    parent_id = ???;  // implememt
-    child_id = ???;
+    parent_id = "origin"; //???;  // implememt
+    child_id = "map_tag_" + std::to_string(i);  //???;
     tf_listener->waitForTransform(child_id, parent_id, ros::Time::now(), ros::Duration(0.7));
     try {
       tf_listener->lookupTransform(parent_id, child_id, ros::Time(0), tag_transforms[i]);

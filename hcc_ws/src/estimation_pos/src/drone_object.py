@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 
+from numpy.lib.financial import nper
 import rospy
 import numpy as np
 import message_filters
@@ -35,11 +36,11 @@ transform = Odometry()
 
 
 def main():
-    depth_image_sub = message_filters.Subscriber('???', ???)
-    bb_sub = message_filters.Subscriber('???', ???)
-    ts = message_filters.ApproximateTimeSynchronizer(???, ???, ???)
-    ts.registerCallback(???)
-    rospy.Subscriber("???", ???, ???)
+    depth_image_sub = message_filters.Subscriber('/camera/aligned_depth_to_color/image_raw', Image) # ('???', ???)
+    bb_sub = message_filters.Subscriber('/darknet_ros/bounding_boxes', BoundingBoxes) #('???', ???)
+    ts = message_filters.ApproximateTimeSynchronizer([depth_image_sub, bb_sub], 10, 0.5) #(???, ???, ???)
+    ts.registerCallback(callback) #(???)
+    rospy.Subscriber("apriltag_localization", Odometry, transform_cb) #("???", ???, ???)
     rospy.spin()
 
 def transform_cb(msg):
@@ -57,17 +58,31 @@ def callback(depth_img, bb):
     # print(local_time)
 
 
-    # you could set the time error (local_time - transform_time) by yourseelf    
-    if abs(local_time - transform_time) < ??? and transform_time != 0:
+def publish_object_location(location):
+    print(object_position/1000)
+    point_message = PointStamped()
+    point_message.header = depth_img.header
+    point_message.header.frame_id = "camera_color_optical_frame"
+    point_message.point.x = object_position[0]/1000
+    point_message.point.y = object_position[1]/1000
+    point_message.point.z = object_position[2]/1000
+    pub.publish(point_message)
+
+    # you could set the time error (local_time - transform_time) by yourself    
+    if abs(local_time - transform_time) < 0.1 and transform_time != 0: #??? and transform_time != 0:
         print("Time error")
         print(local_time - transform_time)
         
         # hint: http://docs.ros.org/en/jade/api/tf/html/python/transformations.html
         # You could use "quaternion_matrix" function to find the 4x4 transform matrix
-        global_transform = quaternion_matrix(???)
-        global_transform[0][3] = ???
-        global_transform[1][3] = ???
-        global_transform[2][3] = ???
+        global_transform = quaternion_matrix(np.array(
+                                            [transform.pose.pose.orientation.x, 
+                                             transform.pose.pose.orientation.y, 
+                                             transform.pose.pose.orientation.z, 
+                                             transform.pose.pose.orientation.w])) #(???)
+        global_transform[0][3] = transform.pose.pose.position.x #???
+        global_transform[1][3] = transform.pose.pose.position.y #???
+        global_transform[2][3] = transform.pose.pose.position.z #???
         # print("transform")
         # print(global_transform)
         try:
@@ -77,7 +92,36 @@ def callback(depth_img, bb):
             print(e)
 
         for i in bb.bounding_boxes:
+            x_mean = (i.xmax + i.xmin) / 2
+            y_mean = (i.ymax + i.ymin) / 2
+
             if i.Class == "umbrella":
+                rospy.loginfo("see umbrella")
+                zc = cv_depthimage2[int(y_mean)][int(x_mean)]
+                v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy), 1).reshape([4, 1])
+                object_position = np.dot(global_transform, v1)
+                publish_object_location(object_position)
+                
+            elif i.Class == "bike":
+                rospy.loginfo("see bike")
+                zc = cv_depthimage2[int(y_mean)][int(x_mean)]
+                v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy), 1).reshape([4, 1])
+                object_position = np.dot(global_transform, v1)
+                publish_object_location(object_position)
+
+            elif i.Class == "teddy bear":
+                rospy.loginfo("see teddy bear")
+                zc = cv_depthimage2[int(y_mean)][int(x_mean)]
+                v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy), 1).reshape([4, 1])
+                object_position = np.dot(global_transform, v1)
+                publish_object_location(object_position)
+                
+            elif i.Class == "chair":
+                rospy.loginfo("see chair")
+                zc = cv_depthimage2[int(y_mean)][int(x_mean)]
+                v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy), 1).reshape([4, 1])
+                object_position = np.dot(global_transform, v1)
+                publish_object_location(object_position)
             ############################
             #  Student Implementation  #
             ############################
@@ -86,7 +130,7 @@ def callback(depth_img, bb):
 
             
 
-def getXYZ(xp, yp, zc, fx,fy,cx,cy):
+def getXYZ(xp, yp, zc, fx, fy, cx, cy):
     #### Definition:
     # cx, cy : image center(pixel)
     # fx, fy : focal length
