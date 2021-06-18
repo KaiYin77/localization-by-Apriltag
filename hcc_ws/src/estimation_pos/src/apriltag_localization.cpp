@@ -53,7 +53,7 @@ void listener(){
       double x = v.x();
       double y = v.y();
       double z = v.z();
-      dist = sqrt(pow(x,2)+(pow(y,2))+(pow(z,2)));
+      dist = v.length();
       /************************************************************** 
       //                                                           //
       //                                                           //
