@@ -46,8 +46,13 @@ Please remember you have to source your environment workspace if you open a new 
 ```
 $ source devel/setup.bash
 ```
-### Implementation
+### Implementation method 1 (Run together)
+Run ROS master:
+`$ roscore`
+Run Run_all_[drone / pyrobot]:
+`$ source RUN_all_[].sh`
 
+### Implementation method 2 (Run seperatly)
 Run ROS master:  
 `$ roscore`
 

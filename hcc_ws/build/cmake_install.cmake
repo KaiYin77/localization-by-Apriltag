@@ -137,7 +137,9 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/ee904/MOLA/bob_lab/hcc-lab-2021/hcc-final-competition-2021/hcc_ws/build/gtest/cmake_install.cmake")
   include("/home/ee904/MOLA/bob_lab/hcc-lab-2021/hcc-final-competition-2021/hcc_ws/build/apriltags_ros/apriltags/cmake_install.cmake")
+  include("/home/ee904/MOLA/bob_lab/hcc-lab-2021/hcc-final-competition-2021/hcc_ws/build/darknet_ros/darknet_ros_msgs/cmake_install.cmake")
   include("/home/ee904/MOLA/bob_lab/hcc-lab-2021/hcc-final-competition-2021/hcc_ws/build/estimation_pos/cmake_install.cmake")
+  include("/home/ee904/MOLA/bob_lab/hcc-lab-2021/hcc-final-competition-2021/hcc_ws/build/darknet_ros/darknet_ros/cmake_install.cmake")
   include("/home/ee904/MOLA/bob_lab/hcc-lab-2021/hcc-final-competition-2021/hcc_ws/build/apriltags_ros/apriltags_ros/cmake_install.cmake")
   include("/home/ee904/MOLA/bob_lab/hcc-lab-2021/hcc-final-competition-2021/hcc_ws/build/usb_cam/cmake_install.cmake")
 
