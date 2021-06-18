@@ -25,6 +25,7 @@ Publisher transform_pub;
 
 
 void listener(){
+  cout<<"In Listener"<<endl;
   // use tf_listener to get the transformation from camera_link to tag 0
   id = -1;
   min_distance = 100;
@@ -70,7 +71,8 @@ void listener(){
       if(dist < min_distance && child_id!=parent_id){
 		    id = i;
 	    	min_distance = dist;
-	  	  min_distance_trans = echo_transform;	
+	  	  min_distance_trans = echo_transform;
+        cout<<"Find the Closest tag : "<< id <<endl;	
 	    }
       /************************************************************** 
       //                                                           //

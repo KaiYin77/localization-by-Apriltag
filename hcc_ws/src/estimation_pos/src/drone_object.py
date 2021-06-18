@@ -51,22 +51,20 @@ def transform_cb(msg):
     # print("Get transform time")
     # print(transform_time)
 
+def publish_object_location(location, depth_img):
+    print(location/1000)
+    point_message = PointStamped()
+    point_message.header = depth_img.header
+    point_message.header.frame_id = "camera_color_optical_frame"
+    point_message.point.x = location[0]/1000
+    point_message.point.y = location[1]/1000
+    point_message.point.z = location[2]/1000
+    pub.publish(point_message)
 
 def callback(depth_img, bb):
     local_time = depth_img.header.stamp.to_sec()
     # print("Get local_time")
     # print(local_time)
-
-
-def publish_object_location(location):
-    print(object_position/1000)
-    point_message = PointStamped()
-    point_message.header = depth_img.header
-    point_message.header.frame_id = "camera_color_optical_frame"
-    point_message.point.x = object_position[0]/1000
-    point_message.point.y = object_position[1]/1000
-    point_message.point.z = object_position[2]/1000
-    pub.publish(point_message)
 
     # you could set the time error (local_time - transform_time) by yourself    
     if abs(local_time - transform_time) < 0.1 and transform_time != 0: #??? and transform_time != 0:
@@ -100,28 +98,28 @@ def publish_object_location(location):
                 zc = cv_depthimage2[int(y_mean)][int(x_mean)]
                 v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy), 1).reshape([4, 1])
                 object_position = np.dot(global_transform, v1)
-                publish_object_location(object_position)
-                
+                publish_object_location(object_position, depth_img)
+
             elif i.Class == "bike":
                 rospy.loginfo("see bike")
                 zc = cv_depthimage2[int(y_mean)][int(x_mean)]
                 v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy), 1).reshape([4, 1])
                 object_position = np.dot(global_transform, v1)
-                publish_object_location(object_position)
+                publish_object_location(object_position, depth_img)
 
             elif i.Class == "teddy bear":
                 rospy.loginfo("see teddy bear")
                 zc = cv_depthimage2[int(y_mean)][int(x_mean)]
                 v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy), 1).reshape([4, 1])
                 object_position = np.dot(global_transform, v1)
-                publish_object_location(object_position)
+                publish_object_location(object_position, depth_img)
                 
             elif i.Class == "chair":
                 rospy.loginfo("see chair")
                 zc = cv_depthimage2[int(y_mean)][int(x_mean)]
                 v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy), 1).reshape([4, 1])
                 object_position = np.dot(global_transform, v1)
-                publish_object_location(object_position)
+                publish_object_location(object_position, depth_img)
             ############################
             #  Student Implementation  #
             ############################
