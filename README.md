@@ -53,7 +53,7 @@ $ roscore
 ```
 Run multiple roslaunch on terminal(T2):
 ```
-$ source RUN_all_[ drone / pyrobot ].sh
+$ source Run_All_[ drone / pyrobot ].sh
 ```
 ### Implementation Method 2 (Run seperatly)
 Run ROS master:  
