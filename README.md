@@ -49,6 +49,7 @@ $ source devel/setup.bash
 ### Implementation method 1 (Run together)
 Run ROS master:
 `$ roscore`
+
 Run Run_all_[drone / pyrobot]:
 `$ source RUN_all_[].sh`
 
