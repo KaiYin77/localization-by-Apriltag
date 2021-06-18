@@ -15,6 +15,7 @@ from tf.transformations import quaternion_matrix
 import math
 
 pub = rospy.Publisher('/object_pose', PointStamped, queue_size=10)
+pub1 = rospy.Publisher('/object_pose_on_camera', PointStamped, queue_size=10)
 rospy.init_node('drone_Object', anonymous=True)
 rospy.loginfo("Start D435_Object_Distance")
 cv_bridge = CvBridge()
@@ -57,7 +58,7 @@ def callback(depth_img, bb):
     # print("Get local_time")
     # print(local_time)
     # you could set the time error2, 3, 4, 5 (local_time - transform_time) by yourself    
-    if abs(local_time - transform_time) < 0.1 and transform_time != 0: #??? and transform_time != 0:
+    if abs(local_time - transform_time) < 0.5 and transform_time != 0: #??? and transform_time != 0:
         print("Time error")
         print(local_time - transform_time)
         
@@ -71,13 +72,25 @@ def callback(depth_img, bb):
         global_transform[0][3] = transform.pose.pose.position.x #???
         global_transform[1][3] = transform.pose.pose.position.y #???
         global_transform[2][3] = transform.pose.pose.position.z #???
-        # print("transform")
-        # print(global_transform)
+        print("transform")
+        print(global_transform)
         try:
             cv_depthimage = cv_bridge.imgmsg_to_cv2(depth_img, "32FC1")
             cv_depthimage2 = np.array(cv_depthimage, dtype=np.float32)
         except CvBridgeError as e:
             print(e)
+        
+        v1 = np.array([0,0,0,1])
+        object_position = np.dot(global_transform, v1)
+        print("camera_link")
+        print(object_position)
+        point_message = PointStamped()
+        point_message.header = depth_img.header
+        point_message.header.frame_id = "origin"
+        point_message.point.x = object_position[0]
+        point_message.point.y = object_position[1]
+        point_message.point.z = object_position[2]
+        pub1.publish(point_message)
 
         for i in bb.bounding_boxes:
             x_mean = (i.xmax + i.xmin) / 2
@@ -91,10 +104,10 @@ def callback(depth_img, bb):
                 point_message = PointStamped()
                 point_message.header = depth_img.header
                 point_message.header.frame_id = "origin"
-                point_message.point.x = object_position[0]/1000
-                point_message.point.y = object_position[1]/1000
-                point_message.point.z = object_position[2]/1000
-                pub.publish(point_message)                
+                point_message.point.x = object_position[0]
+                point_message.point.y = object_position[1]
+                point_message.point.z = object_position[2]
+                pub.publish(point_message)
             elif i.Class == "bike":
                 rospy.loginfo("see bike")
                 zc = cv_depthimage2[int(y_mean)][int(x_mean)]
@@ -103,9 +116,9 @@ def callback(depth_img, bb):
                 point_message = PointStamped()
                 point_message.header = depth_img.header
                 point_message.header.frame_id = "origin"
-                point_message.point.x = object_position[0]/1000
-                point_message.point.y = object_position[1]/1000
-                point_message.point.z = object_position[2]/1000
+                point_message.point.x = object_position[0]
+                point_message.point.y = object_position[1]
+                point_message.point.z = object_position[2]
                 pub.publish(point_message)
             elif i.Class == "teddy bear":
                 rospy.loginfo("see teddy bear")
@@ -115,9 +128,9 @@ def callback(depth_img, bb):
                 point_message = PointStamped()
                 point_message.header = depth_img.header
                 point_message.header.frame_id = "origin"
-                point_message.point.x = object_position[0]/1000
-                point_message.point.y = object_position[1]/1000
-                point_message.point.z = object_position[2]/1000
+                point_message.point.x = object_position[0]
+                point_message.point.y = object_position[1]
+                point_message.point.z = object_position[2]
                 pub.publish(point_message)                
             elif i.Class == "chair":
                 rospy.loginfo("see chair")
@@ -128,23 +141,23 @@ def callback(depth_img, bb):
                 point_message = PointStamped()
                 point_message.header = depth_img.header
                 point_message.header.frame_id = "origin"
-                point_message.point.x = object_position[0]/1000
-                point_message.point.y = object_position[1]/1000
-                point_message.point.z = object_position[2]/1000
+                point_message.point.x = object_position[0]
+                point_message.point.y = object_position[1]
+                point_message.point.z = object_position[2]
                 pub.publish(point_message)
             ############################
             #  Student Implementation  #
             ############################
 
-def publish_object_location(object_position):
-    print(object_position/1000)
-    point_message = PointStamped()
-    point_message.header = depth_img.header
-    point_message.header.frame_id = "origin"
-    point_message.point.x = object_position[0]/1000
-    point_message.point.y = object_position[1]/1000
-    point_message.point.z = object_position[2]/1000
-    pub.publish(point_message)
+# def publish_object_location(object_position):
+#     print(object_position/1000)
+#     point_message = PointStamped()
+#     point_message.header = depth_img.header
+#     point_message.header.frame_id = "origin"
+#     point_message.point.x = object_position[0]/1000
+#     point_message.point.y = object_position[1]/1000
+#     point_message.point.z = object_position[2]/1000
+#     pub.publish(point_message)
 
 def getXYZ(xp, yp, zc, fx, fy, cx, cy):
     #### Definition:
@@ -157,7 +170,7 @@ def getXYZ(xp, yp, zc, fx, fy, cx, cy):
     x = (xp-cx) *  zc * inv_fx
     y = (yp-cy) *  zc * inv_fy
     z = zc
-    return (x,y,z,1)
+    return (x,y,z,1.0)
 
 if __name__ == '__main__':
     main()

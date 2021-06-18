@@ -27,7 +27,7 @@ Publisher transform_pub;
 void listener(){
   // use tf_listener to get the transformation from camera_link to tag 0
   id = -1;
-  min_distance = 100;
+  min_distance = 10000;
   for (int i = 0; i<= 5;i++){
     string parent_id = "camera_link"; //???;
     string child_id = "tag_" + std::to_string(i); //???;
@@ -95,6 +95,7 @@ void listener(){
     */
     tf::Transform localization_trans;
     localization_trans = tag_transforms[id] * min_distance_trans.inverse() * camera_transform;
+    // localization_trans = tag_transforms[id] * min_distance_trans.inverse();
     /**************************************************************
     //                 Student Implementation                    //
     **************************************************************/
@@ -111,6 +112,11 @@ void listener(){
     trans_odem.pose.pose.orientation.w = orientation.getW(); //???
     trans_odem.header.stamp = ros::Time::now();
     transform_pub.publish(trans_odem); //(???)
+    tf::Quaternion q = localization_trans.getRotation();
+    tf::Vector3 v = localization_trans.getOrigin();
+    std::cout << "- Translation: [" << v.getX() << ", " << v.getY() << ", " << v.getZ() << "]" << std::endl;
+    std::cout << "- Rotation: in Quaternion [" << q.getX() << ", " << q.getY() << ", "
+              << q.getZ() << ", " << q.getW() << "]" << std::endl;
   }
   return;
 }
