@@ -55,6 +55,10 @@ Run multiple roslaunch on terminal(T2):
 ```
 $ source Run_All_[ drone / pyrobot ].sh
 ```
+In last one terminal:
+```
+$ python eval.py [drone_ex_ans.txt] [ours] 
+```
 ### Implementation Method 2 (Run seperatly)
 Run ROS master:  
 `$ roscore`
