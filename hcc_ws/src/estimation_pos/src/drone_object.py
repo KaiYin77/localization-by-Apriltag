@@ -74,6 +74,7 @@ def callback(depth_img, bb):
     # print(local_time)
     # you could set the time error2, 3, 4, 5 (local_time - transform_time) by yourself    
     if abs(local_time - transform_time) < 5 and transform_time != 0: #??? and transform_time != 0:
+
         print("Time error")
         print(local_time - transform_time)
         
