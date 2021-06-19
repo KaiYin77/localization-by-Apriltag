@@ -68,8 +68,8 @@ def publish_object_location(location, depth_img):
 
 def callback(depth_img, bb):
     local_time = depth_img.header.stamp.to_sec()
-    # print("Get local_time")
-    # print(local_time)
+    print("Get local_time")
+    print(local_time)
     # you could set the time error2, 3, 4, 5 (local_time - transform_time) by yourself    
     if abs(local_time - transform_time) < 0.5 and transform_time != 0: #??? and transform_time != 0:
         print("Time error")
@@ -149,7 +149,8 @@ def callback(depth_img, bb):
                 point_message.point.x = object_position[0]
                 point_message.point.y = object_position[1]
                 point_message.point.z = object_position[2]
-                pub.publish(point_message)                
+                pub.publish(point_message) 
+
             elif i.Class == "chair":
                 rospy.loginfo("see chair")
                 zc = cv_depthimage2[int(y_mean)][int(x_mean)]
