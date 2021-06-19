@@ -53,6 +53,16 @@ def transform_cb(msg):
     print("Get transform time")
     print(transform_time)
 
+def publish_object_location(location, depth_img):
+    print(location/1000)
+    point_message = PointStamped()
+    point_message.header = depth_img.header
+    point_message.header.frame_id = "camera_color_optical_frame"
+    point_message.point.x = location[0]/1000
+    point_message.point.y = location[1]/1000
+    point_message.point.z = location[2]/1000
+    pub.publish(point_message)
+
 
 def callback(depth_img, bb, color_img):
     local_time = depth_img.header.stamp.to_sec()
@@ -84,8 +94,45 @@ def callback(depth_img, bb, color_img):
         except CvBridgeError as e:
             print(e)
 
-        # for i in bb.bounding_boxes:
-        #     if i.Class == "bottle":
+        for i in bb.bounding_boxes:
+            x_mean = (i.xmax + i.xmin) / 2
+            y_mean = (i.ymax + i.ymin) / 2
+
+            if i.Class == "bottle":
+                zc = cv_depthimage2[int(y_mean)][int(x_mean)]
+                color = cv_colorimage2[int(y_mean)][int(x_mean)]
+                if color[0] > color[1]: 
+                    rospy.loginfo("see orange bottle")
+                    v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy), 1).reshape([4, 1])
+                    object_position = np.dot(global_transform, v1)
+                    publish_object_location(object_position, depth_img)
+                elif color[0] < color[1]:
+                    rospy.loginfo("see green bottle")
+                    v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy), 1).reshape([4, 1])
+                    object_position = np.dot(global_transform, v1)
+                    publish_object_location(object_position, depth_img)
+            
+            elif i.Class == "laptop":
+                rospy.loginfo("see laptop")
+                zc = cv_depthimage2[int(y_mean)][int(x_mean)]
+                v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy), 1).reshape([4, 1])
+                object_position = np.dot(global_transform, v1)
+                publish_object_location(object_position, depth_img)
+
+            elif i.Class == "backpack":
+                rospy.loginfo("see backpack")
+                zc = cv_depthimage2[int(y_mean)][int(x_mean)]
+                v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy), 1).reshape([4, 1])
+                object_position = np.dot(global_transform, v1)
+                publish_object_location(object_position, depth_img)
+
+            elif i.Class == "teddy bear":
+                rospy.loginfo("see teddy bear")
+                zc = cv_depthimage2[int(y_mean)][int(x_mean)]
+                v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy), 1).reshape([4, 1])
+                object_position = np.dot(global_transform, v1)
+                publish_object_location(object_position, depth_img)
+
             ############################
             #  Student Implementation  #
             ############################

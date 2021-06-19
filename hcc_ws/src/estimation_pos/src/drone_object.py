@@ -59,6 +59,15 @@ def transform_cb(msg):
     # print("Get transform time")
     # print(transform_time)
 
+def publish_object_location(location, depth_img):
+    print(location/1000)
+    point_message = PointStamped()
+    point_message.header = depth_img.header
+    point_message.header.frame_id = "camera_color_optical_frame"
+    point_message.point.x = location[0]/1000
+    point_message.point.y = location[1]/1000
+    point_message.point.z = location[2]/1000
+    pub.publish(point_message)
 
 def callback(depth_img, bb):
     local_time = depth_img.header.stamp.to_sec()

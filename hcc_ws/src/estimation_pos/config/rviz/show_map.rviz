@@ -1,6 +1,6 @@
 Panels:
   - Class: rviz/Displays
-    Help Height: 78
+    Help Height: 0
     Name: Displays
     Property Tree Widget:
       Expanded:
@@ -178,7 +178,7 @@ Visualization Manager:
       Update Interval: 0
       Value: true
     - Class: rviz/Image
-      Enabled: false
+      Enabled: true
       Image Topic: /camera/color/image_raw
       Max Value: 1
       Median window: 5
@@ -188,7 +188,7 @@ Visualization Manager:
       Queue Size: 2
       Transport Hint: raw
       Unreliable: false
-      Value: false
+      Value: true
     - Class: rviz/Image
       Enabled: true
       Image Topic: /tag_detections_image
