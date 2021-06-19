@@ -1,8 +1,0 @@
-prefix=/home/ee904/MOLA/bob_lab/hcc-lab-2021/hcc-final-competition-2021/hcc_ws/install
-
-Name: estimation_pos
-Description: Description of estimation_pos
-Version: 0.0.0
-Cflags: 
-Libs: -L${prefix}/lib 
-Requires: 
