@@ -38,10 +38,19 @@ cy = msg.P[6]
 transform_time = 0.0
 transform = Odometry()
 
+Dist_Cam_Umb = 100
+Dist_Cam_Umb_cloest = 100
+
 Umbrella = np.zeros(3)
-Bike = np.zeros(3)
+Bicycle = np.zeros(3)
 TeddyBear =  np.zeros(3)
-TB_CloseToChair = np.zeros(3)
+Chair = np.zeros(3)
+
+Umbrella_output = np.zeros(3)
+Bicycle_output = np.zeros(3)
+TeddyBear_output =  np.zeros(3)
+Chair_output = np.zeros(3)
+
 
 def main():
     depth_image_sub = message_filters.Subscriber('/camera/aligned_depth_to_color/image_raw', Image) # ('???', ???)
@@ -59,20 +68,10 @@ def transform_cb(msg):
     # print("Get transform time")
     # print(transform_time)
 
-def publish_object_location(location, depth_img):
-    print(location/1000)
-    point_message = PointStamped()
-    point_message.header = depth_img.header
-    point_message.header.frame_id = "camera_color_optical_frame"
-    point_message.point.x = location[0]/1000
-    point_message.point.y = location[1]/1000
-    point_message.point.z = location[2]/1000
-    pub.publish(point_message)
-
 def callback(depth_img, bb):
     local_time = depth_img.header.stamp.to_sec()
-    print("Get local_time")
-    print(local_time)
+    # print("Get local_time")
+    # print(local_time)
     # you could set the time error2, 3, 4, 5 (local_time - transform_time) by yourself    
     if abs(local_time - transform_time) < 5 and transform_time != 0: #??? and transform_time != 0:
         print("Time error")
@@ -108,17 +107,26 @@ def callback(depth_img, bb):
         point_message.point.y = org[1]
         point_message.point.z = org[2]
         pub1.publish(point_message)
-
+        
+        global Umbrella
+        global Umbrella_output
+        global Dist_Cam_Umb
+       
         for i in bb.bounding_boxes:
+
             x_mean = (i.xmax + i.xmin) / 2
             y_mean = (i.ymax + i.ymin) / 2
+            x_umb = (i.xmax*1.2 + i.xmin*0.8) /2
 
             if i.Class == "umbrella":
                 rospy.loginfo("see umbrella")
-                zc = cv_depthimage2[int(y_mean)][int(x_mean)]
-                v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy))
+                zc = cv_depthimage2[int(y_mean)][int(x_umb)]
+                v1 = np.array(getXYZ(x_umb, y_mean, zc, fx, fy, cx, cy))
+                Dist_Cam_Umb = np.sqrt(v1[0]*v1[0] + v1[1]*v1[1] + v1[2]*v1[2]) / 1000
+                #print("Dist_Cam_Umb", Dist_Cam_Umb)
                 object_position = np.matmul(global_transform, v1)
-                publish_object_location(object_position,depth_img,org)
+                #print('(x, y, z) = ', object_position[0]/1000 + org[0], object_position[1]/1000 + org[1], object_position[2]/1000 + org[2])
+                publish_object_location(object_position, depth_img, org, Umbrella, i.Class)
                 # point_message = PointStamped()
                 # point_message.header = depth_img.header
                 # point_message.header.frame_id = "origin"
@@ -126,12 +134,12 @@ def callback(depth_img, bb):
                 # point_message.point.y = object_position[1]
                 # point_message.point.z = object_position[2]
                 # pub.publish(point_message)
-            elif i.Class == "bike":
-                rospy.loginfo("see bike")
+            elif i.Class == "bicycle":
+                rospy.loginfo("see bicycle")
                 zc = cv_depthimage2[int(y_mean)][int(x_mean)]
                 v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy))
                 object_position = np.matmul(global_transform, v1)
-                publish_object_location(object_position,depth_img,org)
+                publish_object_location(object_position,depth_img, org, Bicycle, i.Class)
                 # point_message = PointStamped()
                 # point_message.header = depth_img.header
                 # point_message.header.frame_id = "origin"
@@ -144,7 +152,7 @@ def callback(depth_img, bb):
                 zc = cv_depthimage2[int(y_mean)][int(x_mean)]
                 v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy))
                 object_position = np.matmul(global_transform, v1)
-                publish_object_location(object_position,depth_img,org)
+                publish_object_location(object_position,depth_img, org, TeddyBear, i.Class)
                 # point_message = PointStamped()
                 # point_message.header = depth_img.header
                 # point_message.header.frame_id = "origin"
@@ -157,8 +165,8 @@ def callback(depth_img, bb):
                 zc = cv_depthimage2[int(y_mean)][int(x_mean)]
                 v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy))
                 object_position = np.matmul(global_transform, v1)
-                publish_object_location(object_position,depth_img,org)
-                print(v1)
+                publish_object_location(object_position,depth_img, org, Chair, i.Class)
+                # print(v1)
                 # point_message = PointStamped()
                 # point_message.header = depth_img.header
                 # point_message.header.frame_id = "origin"
@@ -169,18 +177,24 @@ def callback(depth_img, bb):
             ############################
             #  Student Implementation  #
             ############################
+            if Dist_Cam_Umb < 1.45 and Dist_Cam_Umb > 1.34:
+                Umbrella_output[0] = Umbrella[0]
+                Umbrella_output[1] = Umbrella[1]
+                Umbrella_output[2] = Umbrella[2]
+                #print('Umbrella_output = ', Umbrella_output)
+
             # print ("os.path.realpath(__file__) = ", os.path.realpath('..'))
             # Write in .txt
-            list = [Umbrella, Bike, TeddyBear, TB_CloseToChair]
+            list = [Umbrella_output, Bicycle, TeddyBear, Chair]
             submission_path = os.path.realpath('..')
-            file = open(submission_path+'/output.txt', 'w')
+            file = open(submission_path+'/output/drone_output.txt', 'w')
             for element in list:
                 file.write(str(element[0]) + " ")
                 file.write(str(element[1]) + " ")
                 file.write(str(element[2]) + "\n")
             file.close()
 
-def publish_object_location(object_position, depth_img,org):
+def publish_object_location(object_position, depth_img, org, obj, class_type):
     # print(object_position/1000)
     point_message = PointStamped()
     point_message.header = depth_img.header
@@ -188,6 +202,9 @@ def publish_object_location(object_position, depth_img,org):
     point_message.point.x = object_position[0]/1000 + org[0]
     point_message.point.y = object_position[1]/1000 + org[1]
     point_message.point.z = object_position[2]/1000 + org[2]
+    obj[0] = object_position[0]/1000 + org[0]
+    obj[1] = object_position[1]/1000 + org[1]
+    obj[2] = object_position[2]/1000 + org[2]
     pub.publish(point_message)
 
 def getXYZ(xp, yp, zc, fx, fy, cx, cy):
