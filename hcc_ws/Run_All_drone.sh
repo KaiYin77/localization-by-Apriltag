@@ -7,7 +7,8 @@ gnome-terminal  --tab  --working-directory="/home/ee904/MOLA/bob_lab/hcc-lab-202
                 --tab  --working-directory="/home/ee904/MOLA/bob_lab/hcc-lab-2021/hcc-final-competition-2021/hcc_ws" -e 'bash -c "source devel/setup.bash ; roslaunch darknet_ros yolov2-tiny.launch; exec bash" '\
                 --tab  --working-directory="/home/ee904/MOLA/bob_lab/hcc-lab-2021/hcc-final-competition-2021/hcc_ws" -e 'bash -c "source devel/setup.bash ; rosrun estimation_pos apriltag_localization ; exec bash" '\
                 --tab  --working-directory="/home/ee904/MOLA/bob_lab/hcc-lab-2021/hcc-final-competition-2021/hcc_ws" -e 'bash -c "source devel/setup.bash ; rosrun estimation_pos drone_object.py; exec bash" '\
-                --tab  --working-directory="/home/ee904/Downloads"\
+                --tab  --working-directory="/home/ee904/Downloads/drone_ex"\
+		--tab  --working-directory="/home/ee904/MOLA/bob_lab/hcc-lab-2021/hcc-final-competition-2021/output"\
 
 exit 0
 
