@@ -112,7 +112,7 @@ void listener(){
     trans_odem.pose.pose.orientation.y = orientation.getY(); //???
     trans_odem.pose.pose.orientation.z = orientation.getZ(); //???
     trans_odem.pose.pose.orientation.w = orientation.getW(); //???
-    trans_odem.header.stamp = ros::Time::now();
+    trans_odem.header.stamp = min_distance_trans.stamp_;
     transform_pub.publish(trans_odem); //(???)
     tf::Quaternion q = localization_trans.getRotation();
     tf::Vector3 v = localization_trans.getOrigin();
