@@ -71,7 +71,7 @@ def transform_cb(msg):
     # print("Get transform time")
     # print(transform_time)
 
-def publish_object_location(object_position, depth_img, org, obj, class_type):
+def publish_object_location(object_position, depth_img, org, obj):
     global Orange_bottle_output
     global Green_bottle_output
     global Laptop_output
@@ -92,11 +92,11 @@ def publish_object_location(object_position, depth_img, org, obj, class_type):
 
 def callback(depth_img, bb, color_img):
     local_time = depth_img.header.stamp.to_sec()
-    #print("Get local_time")
-    #print(local_time)
-    #print(transform_time)
+    print("Get local_time")
+    print(local_time)
+    print(transform_time)
     # you could set the time error (local_time - transform_time) by yourself    
-    if abs(local_time - transform_time) < 0.05 and transform_time != 0: #??? and transform_time != 0:
+    if abs(local_time - transform_time) < 1.5 and transform_time != 0: #??? and transform_time != 0:
         print("Time error")
 
         # hint: http://docs.ros.org/en/jade/api/tf/html/python/transformations.html
@@ -143,33 +143,33 @@ def callback(depth_img, bb, color_img):
                     rospy.loginfo("see orange bottle")
                     v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy))
                     object_position = np.dot(global_transform, v1)
-                    publish_object_location(object_position,depth_img, org, Orange_bottle, i.Class)
+                    publish_object_location(object_position,depth_img, org, Orange_bottle)
                 elif color[0] < color[1]:
                     rospy.loginfo("see green bottle")
                     v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy))
                     object_position = np.dot(global_transform, v1)
-                    publish_object_location(object_position,depth_img, org, Green_bottle, i.Class)
+                    publish_object_location(object_position,depth_img, org, Green_bottle)
             
             elif i.Class == "laptop":
                 rospy.loginfo("see laptop")
                 zc = cv_depthimage2[int(y_mean)][int(x_mean)]
                 v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy))
                 object_position = np.dot(global_transform, v1)
-                publish_object_location(object_position,depth_img, org, Laptop_near_tag1, i.Class)
+                publish_object_location(object_position,depth_img, org, Laptop_near_tag1)
 
             elif i.Class == "backpack":
                 rospy.loginfo("see backpack")
                 zc = cv_depthimage2[int(y_mean)][int(x_mean)]
                 v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy))
                 object_position = np.dot(global_transform, v1)
-                publish_object_location(object_position,depth_img, org, Backpack, i.Class)
+                publish_object_location(object_position,depth_img, org, Backpack)
 
             elif i.Class == "teddy bear":
                 rospy.loginfo("see teddy bear")
                 zc = cv_depthimage2[int(y_mean)][int(x_mean)]
                 v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy))
                 object_position = np.dot(global_transform, v1)
-                publish_object_location(object_position,depth_img, org, TeddyBear, i.Class)
+                publish_object_location(object_position,depth_img, org, TeddyBear)
 
             ############################
             #  Student Implementation  #
