@@ -146,11 +146,14 @@ def callback(depth_img, bb):
             x_mean = (i.xmax + i.xmin) / 2
             y_mean = (i.ymax + i.ymin) / 2
 
-            y_umb = (i.ymax*0.8 + i.ymin*1.2) / 2
             x_umb = (i.xmax*0.8 + i.xmin*1.2) / 2
-            
+            y_umb = (i.ymax*0.8 + i.ymin*1.2) / 2
+
             x_bike = (i.xmax + i.xmin) / 2
-            y_bike = (i.ymax * 3 + i.ymin) / 4
+            y_bike = (i.ymax*3 + i.ymin) / 4
+
+            x_chair = (i.xmax + i.xmin) / 2
+            y_chair = (i.ymax*3 + i.ymin) / 4
 
 
             if i.Class == "umbrella" and i.probability >= 0.6:
@@ -187,10 +190,16 @@ def callback(depth_img, bb):
                                 
             elif i.Class == "chair":
                 rospy.loginfo("see chair")
-                zc = cv_depthimage2[int(y_mean)][int(x_mean)]
-                v1 = np.array(getXYZ(x_mean, y_mean, zc, fx, fy, cx, cy))
+                # calibrate 
+                zc = cv_depthimage2[int(y_chair)][int(x_chair)] - 200
+                v1 = np.array(getXYZ(x_chair, y_chair, zc, fx, fy, cx, cy))
+                Dist_Cam_chair = np.sqrt(v1[0]*v1[0] + v1[1]*v1[1] + v1[2]*v1[2]) / 1000
+                print('Dist_Chair:', Dist_Cam_chair)
                 object_position = np.matmul(global_transform, v1)
-                publish_object_location(object_position,depth_img, org, Chair_avg)
+                print('chair_confidence', i.probability)
+                print('chair:', object_position[:3] /1000 + org[:3])
+                if(Dist_Cam_chair < 3):
+                    publish_object_location(object_position,depth_img, org, Chair_avg)
             ############################
             #  Student Implementation  #
             ############################
@@ -296,17 +305,23 @@ def callback(depth_img, bb):
                     TeddyBear[2] = TeddyBear_avg[i][2]
             print('TeddyBear: ', TeddyBear[0], TeddyBear[1], TeddyBear[2])
 
-        if len(Chair_avg) != 0:
+        if len(Chair_avg) >= 3: # !=0
             Chair[0] = 0
             Chair[1] = 0
             Chair[2] = 0
-            for i in range(len(Chair_avg)):
-                Chair[0] = Chair[0] + Chair_avg[i][0]
-                Chair[1] = Chair[1] + Chair_avg[i][1]
-                Chair[2] = Chair[2] + Chair_avg[i][2]
-            Chair[0] = Chair_avg[len(Chair_avg) - 1][0]
-            Chair[1] = Chair_avg[len(Chair_avg) - 1][1]
-            Chair[2] = Chair_avg[len(Chair_avg) - 1][2]
+            for i in range(3):
+                Chair[0] = Chair[0] + Chair_avg[-i-1][0]
+                Chair[1] = Chair[1] + Chair_avg[-i-1][1]
+                Chair[2] = Chair[2] + Chair_avg[-i-1][2]
+            
+            Chair[0] = Chair[0] / 3.0
+            Chair[1] = Chair[1] / 3.0
+            Chair[2] = Chair[2] / 3.0
+            
+            # Chair[0] = Chair_avg[len(Chair_avg) - 1][0]
+            # Chair[1] = Chair_avg[len(Chair_avg) - 1][1]
+            # Chair[2] = Chair_avg[len(Chair_avg) - 1][2]
+            print('Chair: ', Chair[0], Chair[1], Chair[2])
 
         submission_path = os.path.realpath('..')
         file = open(submission_path+'/output/drone_output.txt', 'w')

@@ -23,6 +23,7 @@ double min_distance = 100;
 double check_time[6] = {0};
 Publisher transform_pub;
 
+tf::StampedTransform camera_transform2;
 
 void listener(){
   cout<<"In Listener"<<endl;
@@ -68,11 +69,13 @@ void listener(){
         find the closet distance from the tag to camera_link (remember to modify the parent_id).  //
       */
       // find the closet tag to localization
-      if(dist < min_distance && child_id!=parent_id){
+
+      if(dist < min_distance && check_time[i] != local_time){
 		    id = i;
 	    	min_distance = dist;
 	  	  min_distance_trans = echo_transform;
-        cout<<"Find the Closest tag : "<< id <<endl;	
+        check_time[i] = local_time;
+        cout <<"Find the Closest tag : "<< id << ", dist: " << dist  << ", check_time:" << check_time[i] << endl;	
 	    }
       /************************************************************** 
       //                                                           //
@@ -96,7 +99,9 @@ void listener(){
         Find transformation matrix from "camera_color_optical_frame" to "origin".
     */
     tf::Transform localization_trans;
-    localization_trans = tag_transforms[id] * min_distance_trans.inverse() * camera_transform;
+    localization_trans = tag_transforms[id] * min_distance_trans.inverse() * camera_transform2;
+    // localization_trans = tag_transforms[id] * min_distance_trans.inverse() * camera_transform;
+
     // localization_trans = tag_transforms[id] * min_distance_trans.inverse();
     /**************************************************************
     //                 Student Implementation                    //
@@ -133,20 +138,30 @@ int main(int argc, char** argv){
 
   bool find = false;
 
-  /* get the transform from "camera_color_optical_frame" to "camera_link" */
+  // /* get the transform from "camera_color_optical_frame" to "camera_link" */
   string parent_id = "camera_link"; //???;   // implememt
   string child_id = "camera_color_optical_frame"; //???;
-  while (!find) {
-    tf_listener->waitForTransform(child_id, parent_id, ros::Time::now(), ros::Duration(0.7));
-    try {
-      tf_listener->lookupTransform(parent_id, child_id, ros::Time(0), camera_transform);
-      cout << "Get transform from \"camera_color_optical_frame\" to \"camera_link\"!!!!!!!\n";
-      find = true;
-    }
-    catch (tf::TransformException& ex){
-      std::cout << "Exception thrown:" << ex.what() << std::endl;
-    }
-  }
+  // while (!find) {
+  //   tf_listener->waitForTransform(child_id, parent_id, ros::Time::now(), ros::Duration(0.7));
+  //   try {
+  //     tf_listener->lookupTransform(parent_id, child_id, ros::Time(0), camera_transform);
+  //     cout << "Get transform from \"camera_color_optical_frame\" to \"camera_link\"!!!!!!!\n";
+  //     find = true;
+  //   }
+  //   catch (tf::TransformException& ex){
+  //     std::cout << "Exception thrown:" << ex.what() << std::endl;
+  //   }
+  // }
+
+  tf::Quaternion q1(-0.500002, 0.498092, -0.501725, 0.500175);
+  tf::Vector3 v1(0.000460477, 0.0150293, 0.000334228);
+  camera_transform2.setRotation(q1);
+  camera_transform2.setOrigin(v1);
+  // tf::Quaternion q2 = camera_transform2.getRotation();
+  // tf::Vector3 v2 = camera_transform2.getOrigin();
+  // std::cout << "- Translation: [" << v2.getX() << ", " << v2.getY() << ", " << v2.getZ() << "]" << std::endl;
+  // std::cout << "- Rotation: in Quaternion [" << q2.getX() << ", " << q2.getY() << ", "
+  //           << q2.getZ() << ", " << q2.getW() << "]" << std::endl;
 
   /* get the transform from "map_tag" to "origin" */
   for (int i = 0; i <=5; i++) {

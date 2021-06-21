@@ -104,7 +104,6 @@ def publish_object_location(object_position, depth_img, org, obj, class_type, bb
     obj[0] = object_position[0]/1000 + org[0]
     obj[1] = object_position[1]/1000 + org[1]
     obj[2] = object_position[2]/1000 + org[2]
-    pub.publish(point_message)
     # append to array
     if class_type == "ob":
         Orange_bottle_output = np.append(Orange_bottle_output,obj)
@@ -114,6 +113,7 @@ def publish_object_location(object_position, depth_img, org, obj, class_type, bb
         Laptop_output = np.append(Laptop_output,obj)
     elif class_type == "bp":
         Backpack_output = np.append(Backpack_output,obj)
+        pub.publish(point_message)
     elif class_type == "tb":
         TeddyBear_output = np.append(TeddyBear_output,obj)
     # print(Green_bottle_output.reshape(-1,3))
@@ -129,7 +129,7 @@ def callback(depth_img, bb, color_img):
     print(local_time)
     print(transform_time)
     # you could set the time error (local_time - transform_time) by yourself    
-    if abs(local_time - transform_time) < 0.8 and transform_time != 0: #??? and transform_time != 0:
+    if abs(local_time - transform_time) < 1 and transform_time != 0: #??? and transform_time != 0:
         global tag_1
         print("Time error")
 
@@ -166,6 +166,7 @@ def callback(depth_img, bb, color_img):
         point_message.point.y = org[1]
         point_message.point.z = org[2]
         pub1.publish(point_message)
+        print("pub camera")
 
         # put the ground truth here for rviz
         # point_message.point.x = 0
@@ -231,14 +232,14 @@ def callback(depth_img, bb, color_img):
             ############################
             # print ("os.path.realpath(__file__) = ", os.path.realpath('..'))
             # Write in .txt
-            list = [Orange_bottle, Green_bottle, Laptop_near_tag1, Backpack, TeddyBear]
-            submission_path = os.path.realpath('..')
-            file = open(submission_path+'/output/pyrobot_output.txt', 'w')
-            for element in list:
-                file.write(str(element[0]) + " ")
-                file.write(str(element[1]) + " ")
-                file.write(str(element[2]) + "\n")
-            file.close()
+            #list = [Orange_bottle, Green_bottle, Laptop_near_tag1, Backpack, TeddyBear]
+            #submission_path = os.path.realpath('..')
+            #file = open(submission_path+'/output/pyrobot_output.txt', 'w')
+            #for element in list:
+            #    file.write(str(element[0]) + " ")
+            #    file.write(str(element[1]) + " ")
+            #    file.write(str(element[2]) + "\n")
+            #file.close()
 
             
 
