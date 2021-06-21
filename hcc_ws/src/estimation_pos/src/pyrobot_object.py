@@ -125,9 +125,9 @@ def publish_object_location(object_position, depth_img, org, obj, class_type, bb
 
 def callback(depth_img, bb, color_img):
     local_time = depth_img.header.stamp.to_sec()
-    # print("Get local_time")
-    # print(local_time)
-    # print(transform_time)
+    #print("Get local_time")
+    #print(local_time)
+    #print(transform_time)
     # you could set the time error (local_time - transform_time) by yourself    
     if abs(local_time - transform_time) < 0.8 and transform_time != 0: #??? and transform_time != 0:
         global tag_1
@@ -153,7 +153,6 @@ def callback(depth_img, bb, color_img):
             cv_colorimage2 = np.array(cv_colorimage, dtype=np.float32)
         except CvBridgeError as e:
             print(e)
-
         # publish camera pos in origin frame
         v1 = np.array([0,0,0,1])
         org = np.matmul(global_transform, v1)
@@ -240,7 +239,6 @@ def callback(depth_img, bb, color_img):
                 file.write(str(element[1]) + " ")
                 file.write(str(element[2]) + "\n")
             file.close()
-
 
             
 

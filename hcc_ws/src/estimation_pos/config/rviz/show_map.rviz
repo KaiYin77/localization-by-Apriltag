@@ -25,7 +25,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: apriltag Image
+    SyncSource: raw image
 Preferences:
   PromptSaveOnExit: true
 Toolbars:
@@ -56,15 +56,7 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        ar_tag:
-          Value: true
         arm_base_link:
-          Value: true
-        base_footprint:
-          Value: true
-        base_link:
-          Value: true
-        battery_link:
           Value: true
         cam_mount:
           Value: true
@@ -92,16 +84,6 @@ Visualization Manager:
           Value: true
         camera_link:
           Value: true
-        caster_back_link:
-          Value: true
-        caster_front_link:
-          Value: true
-        cliff_sensor_front_link:
-          Value: true
-        cliff_sensor_left_link:
-          Value: true
-        cliff_sensor_right_link:
-          Value: true
         elbow_link:
           Value: true
         finger_l:
@@ -111,8 +93,6 @@ Visualization Manager:
         forearm_link:
           Value: true
         gripper_link:
-          Value: true
-        gyro_link:
           Value: true
         head_pan_link:
           Value: true
@@ -142,11 +122,8 @@ Visualization Manager:
           Value: true
         odom:
           Value: true
+
         origin:
-          Value: true
-        plate_1:
-          Value: true
-        plate_2:
           Value: true
         shoulder_link:
           Value: true
@@ -156,6 +133,7 @@ Visualization Manager:
           Value: true
         tag_2:
           Value: true
+
         tag_5:
           Value: true
         wheel_left_link:
