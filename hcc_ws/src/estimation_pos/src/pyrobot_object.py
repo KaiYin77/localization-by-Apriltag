@@ -124,6 +124,8 @@ def publish_object_location(object_position, depth_img, org, obj, class_type, bb
 
 
 def callback(depth_img, bb, color_img):
+    global transform_time
+    global transform
     local_time = depth_img.header.stamp.to_sec()
     print("Get local_time")
     print(local_time)

@@ -178,7 +178,7 @@ def callback(depth_img, bb):
                 if(Dist_Cam_bike > 1.8 and Dist_Cam_bike < 2.5):
                     publish_object_location(object_position,depth_img, org, Bicycle_avg)
                 
-            elif i.Class == "teddy bear" or i.Class == "person":
+            elif i.Class == "teddy bear": #or i.Class == "person":
                 person_count = person_count + 1
                 if i.Class == "teddy bear" or person_count > 10:
                     print('teddy_confidence', i.probability)
