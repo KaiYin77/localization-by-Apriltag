@@ -55,9 +55,13 @@ Run multiple roslaunch on terminal(T2):
 ```
 $ source Run_All_[ drone / pyrobot ].sh
 ```
-In last one terminal:
+Generate final position by local outlier factor:
 ```
-$ python eval.py [drone_ex_ans.txt] [ours] 
+$ python output_generate.py
+```
+Evaluation the outcome:
+```
+$ python eval.py [ans.txt] [ours] 
 ```
 ### Implementation Method 2 (Run seperatly)
 Run ROS master:  
