@@ -27,9 +27,6 @@ $ git branch <new_branch_name>
 $ git checkout -b <your_branch_name>
 ```
 
-Please copy the "darknet_ros" pakage you have use in Lab8 and Lab9 into your workspace.  
-![](https://imgur.com/0dVP4uY.png)  
-
 ## Step2
 Please finish the template shown below:
 * hcc-final-competition-2021/hcc_ws/src/estimation_pos/src/apriltag_localization.cpp
